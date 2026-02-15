@@ -54,7 +54,7 @@ app.post('/api/update', (req, res) => {
     const { api_key, winner_uuid, winner_name, loser_uuid, loser_name, winner_wins, winner_losses, loser_wins, loser_losses } = req.body;
     
     // Проверка API ключа (замените на свой)
-    if (api_key !== 'ваш-секретный-ключ') {
+    if (api_key !== 'skypvp_8f7d3a2b9e1c4f5d6a7b8c9d0e1f2g3h') {
         return res.status(403).json({ error: 'Invalid API key' });
     }
 
