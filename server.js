@@ -12,7 +12,7 @@ const STATS_FILE = path.join(__dirname, 'stats.json');
 app.use(cors());
 app.use(bodyParser.json());
 
-// Раздаём статические файлы из папки public (там будет index.html)
+// Раздаём статические файлы из папки public
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Загрузка статистики из файла
@@ -53,7 +53,7 @@ app.get('/api/stats', (req, res) => {
 app.post('/api/update', (req, res) => {
     const { api_key, winner_uuid, winner_name, loser_uuid, loser_name, winner_wins, winner_losses, loser_wins, loser_losses } = req.body;
     
-    // Проверка API ключа (замените на свой)
+    // Проверка API ключа
     if (api_key !== 'skypvp_8f7d3a2b9e1c4f5d6a7b8c9d0e1f2g3h') {
         return res.status(403).json({ error: 'Invalid API key' });
     }
@@ -74,16 +74,28 @@ app.post('/api/update', (req, res) => {
 app.post('/api/update/bulk', (req, res) => {
     const { api_key, players } = req.body;
     
-    if (api_key !== 'ваш-секретный-ключ') {
+    // ИСПРАВЛЕНО: используем тот же ключ
+    if (api_key !== 'skypvp_8f7d3a2b9e1c4f5d6a7b8c9d0e1f2g3h') {
         return res.status(403).json({ error: 'Invalid API key' });
     }
 
-    // players = { "uuid": { wins: 10, losses: 2, name: "Player1" } }
+    // Простая проверка, что players - это объект
+    if (typeof players !== 'object' || players === null) {
+        return res.status(400).json({ error: 'Invalid players data' });
+    }
+
+    // Заменяем статистику
     stats = players;
     saveStats(stats);
     res.json({ status: 'ok' });
 });
 
+// Добавим простой ping-эндпоинт для UptimeRobot
+app.get('/ping', (req, res) => {
+    res.send('OK');
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`API доступен по адресу: http://localhost:${PORT}/api/stats`);
 });
